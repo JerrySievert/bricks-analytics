@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <title>Bricks.js - Analytics</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script type="text/javascript" src="/bricks-status/handlebars.js"></script>
+  <style type="text/css">
+  body { padding: 16px; margin: 0px auto; }
+  td { width: 128px;}
+  </style>
+</head>
+<body>
+  <h1>Bricks.js - Analytics</h1>
+  <div id="status"></div>
+  <div id="analytics"></div>
+  <script type="text/javascript">
+  $(document).ready(function () {
+    retrieveData();
+  });
+  
+  function retrieveData() {
+    $.getJSON('/bricks-status/analytics.json', function(data) {
+      if (data) {
+        displayAnalytics(data);
+      }
+    });
+
+    $.getJSON('/bricks-status/status.json', function(data) {
+      if (data) {
+        displayStatus(data);
+      }
+    });
+
+    setTimeout(retrieveData, 10000);
+  }
+
+  function displayAnalytics (data) {
+    var end   = new Date(Math.floor(data[data.length - 1].end / 1000));
+    var start = new Date(Math.floor(data[0].start / 1000));
+    var div = $("<div>");
+
+    div.append($("<h2>").text("Last " + data.length + " Requests"));
+    div.append($("<span>").text("(" + start + " - " + end + ")"));
+    div.append($("<br>"));
+    div.append($("<br>"));
+    
+    for (var i = 0; i < data.length; i++) {
+      var route = data[i];
+      for (var j = 0; j < route.routes.length; j++) {
+        route.routes[j].time = route.routes[j].end - route.routes[j].start;
+        route.routes[j].startDate = new Date(Math.floor(route.routes[j].start / 1000));
+        route.routes[j].endDate = new Date(Math.floor(route.routes[j].end / 1000));
+      }
+      var template = Handlebars.compile(atpl);
+      div.append(template(route));
+    }
+    
+    $("#analytics").html(div);
+  }
+
+  function displayStatus (data) {
+    data.start_time = new Date(data.start_time);
+    
+    var div = $("<div>");
+    div.append($("<h2>").text("Current Status"));
+    var template = Handlebars.compile(stpl);
+    div.append(template(data));
+    
+    $("#status").html(div);
+  }
+
+  
+  var atpl = '<div><strong>{{url}}</strong><ul class="details">{{#each routes}}<li class="route">{{route}} - {{time}}μs</li>{{/each}}</ul></div>';
+  
+  var stpl = '<div> <strong>Startup:</strong> {{start_time}} <br><strong>Requests:</strong> {{requests}}<br> <strong>Bytes Transfered:</strong> {{bytes_transfered}}<br> <strong>Memory:</strong> <ul> <li><strong>RSS:</strong> {{memory.rss}} </li> <li> <strong>VSIZE:</strong> {{memory.vsize}} </li> <li> <strong>HEAP TOTAL:</strong> {{memory.headTotal}}</li> <li> <strong>HEAP USED:</strong> {{memory.heapUsed}} </li> </ul><br><table class="methods"> <thead> <tr> <th colspan="2"> Methods </th> </tr> </thead> <tbody> <tr> <td> GET </td> <td>{{method_get_count}} </td> </tr> <tr> <td> HEAD </td> <td> {{method_option_count}} </td> </tr> <tr> <td> POST </td> <td> {{method_post_count}} </td></tr> <tr> <td> PUT </td> <td> {{method_put_count}} </td> </tr> <tr> <td> DELETE </td> <td> {{method_delete_count}} </td> </tr> <tr> <td> CONNECT </td><td> {{method_connect_count}} </td> </tr> <tr> <td> OPTION </td> <td> {{method_option_count}} </td> </tr> <tr> <td> TRACE </td> <td>{{method_trace_count}} </td> </tr> <tr> <td> OTHER </td> <td> {{method_other_count}} </td> </tr> </tbody> </table> <table class="status"> <thead> <tr><th colspan="2"> Methods </th> </tr> </thead> <tbody> <tr> <td> 1XX </td> <td> {{status_1XX_count}} </td> </tr> <tr> <td> 2XX </td> <td>{{status_2XX_count}} </td> </tr> <tr> <td> 3XX </td> <td> {{status_3XX_count}} </td> </tr> <tr> <td> 4XX </td> <td> {{status_4XX_count}} </td> </tr><tr> <td> 5XX </td> <td> {{status_5XX_count}} </td> </tr> <tr> <td> OTHER </td> <td> {{status_other_count}} </td> </tr> </tbody></table><br> </div>';
+  </script>
+</body>
+</html>
