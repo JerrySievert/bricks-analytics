@@ -10,7 +10,7 @@
 
     var analytics = require('bricks-analytics');
     
-    appServer.addRoute(".+", analytics, { section: "post", top: true, keep: 100 /* default 10 */ });
+    appServer.addRoute(".+", analytics, { section: "pre", top: true, keep: 100 /* default 10 */ });
 
 Analytics are then available via two `JSON` requests:
 
