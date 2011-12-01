@@ -3,7 +3,7 @@
   "name": "bricks-analytics",
   "description": "Analytics and status package for bricks.js",
   "keywords": ["analytics", "bricks", "bricksjs"],
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license" : "MIT/X11",
   "repository": {
     "type": "git",
@@ -11,7 +11,7 @@
   },
   "main": "./lib/bricks-analytics.js",
   "engines": {
-    "node": "~v0.4.7"
+    "node": ">=v0.4.7"
   },
   "dependencies": {
       "microtime": "~0.1.3"
