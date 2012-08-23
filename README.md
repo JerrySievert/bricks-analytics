@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/JerrySievert/bricks-analytics.png)](http://travis-ci.org/JerrySievert/bricks-analytics)
 # bricks-analytics #
 
 `bricks-analytics` adds basic route analytics and status information about the health of the `http server`.
